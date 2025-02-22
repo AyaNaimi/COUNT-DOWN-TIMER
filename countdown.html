@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&display=swap');
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000000;  
+      
+    }
+
+    .container {color: #c97c08;
+      text-align: center;
+      background: rgb(0, 0, 0);
+      padding: 2rem;
+      border-radius: 10px;
+      font-family: "Playfair Display";
+      font-size: clamp(2rem, 3vw, 7rem);
+
+    }
+
+    .input-group input {
+      width: 100px;
+      padding: 8px;
+      margin: 10px;
+      font-size: 1.4rem;
+      border-radius: 30px;
+      background-color: #e9e4dc;
+      text-align: center;
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-family: "Playfair Display";
+      font-size: 1rem;
+      cursor: pointer;
+      background: #af8c4c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    #display {
+      font-size: 3rem;
+      margin: 20px 0;
+      color: #ece9e2;
+      transition: all 0.3s ease;
+    }
+
+    /* New style for active timer state */
+    #display.active-timer {
+    font-size: clamp(2rem, 20vw, 20rem);
+    font-family: "PT Serif";
+    color: #af8c4c;
+    text-shadow: 2px 2px 4px rgba(116, 101, 101, 0.2);
+}
+
+    #show-all-btn {
+
+background-color: transparent; 
+outline: none;
+border: none;
+color: #664404;
+border-radius: 5px;
+font-size: 8px;
+      margin-top: 20%;
+
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Countdown Timer</h1>
+    <div class="input-group">
+      <input type="number" id="hours" placeholder="HH" min="0">
+      <input type="number" id="minutes" placeholder="MM" min="0" max="59">
+      <input type="number" id="seconds" placeholder="SS" min="0" max="59">
+    </div>
+    <div class="buttons">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="resetTimer()">Reset</button>
+    </div>
+    <div id="display">00:00:00</div>
+    <button id="show-all-btn" class="hide" onclick="showAllElements()">Show Controls</button>
+  </div>
+
+  <script>
+    let countdown;
+
+    function startTimer() {
+      const hours = parseInt(document.getElementById('hours').value) || 0;
+      const minutes = parseInt(document.getElementById('minutes').value) || 0;
+      const seconds = parseInt(document.getElementById('seconds').value) || 0;
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      if (totalSeconds <= 0) {
+        alert("Please enter valid time!");
+        return;
+      }
+
+      const display = document.getElementById('display');
+      display.classList.add('active-timer');
+
+      // Hide controls and show "Show Controls" button
+      document.querySelectorAll('.input-group, .buttons,h1').forEach(el => el.classList.add('hide'));
+      document.getElementById('show-all-btn').classList.remove('hide');
+
+      if (countdown) clearInterval(countdown);
+
+      let remaining = totalSeconds;
+      countdown = setInterval(() => {
+        remaining--;
+        
+        const h = Math.floor(remaining / 3600);
+        const m = Math.floor((remaining % 3600) / 60);
+        const s = remaining % 60;
+
+        display.textContent = 
+          `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+        if (remaining <= 0) {
+          clearInterval(countdown);
+          display.classList.remove('active-timer');
+          alert("Time's up!");
+          resetTimer();
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(countdown);
+      document.getElementById('display').textContent = '00:00:00';
+      document.getElementById('display').classList.remove('active-timer');
+      document.querySelectorAll('input').forEach(input => input.value = '');
+      showAllElements();
+    }
+
+    function showAllElements() {
+      document.querySelectorAll('.hide').forEach(el => el.classList.remove('hide'));
+      document.getElementById('show-all-btn').classList.add('hide');
+    }
+  </script>
+</body>
+</html>
